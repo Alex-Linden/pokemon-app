@@ -64,8 +64,8 @@ export default function BrowsePage() {
                     <Grid item xs={12} sm={6} md={3} key={pokemon.id}>
                         <PokemonCard
                             pokemon={pokemon}
+                            showCatch={!!user}
                             onCatch={handleCatch}
-                            showCatch={user.isLoggedIn}
                         />
                     </Grid>
                 ))}
