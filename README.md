@@ -21,13 +21,20 @@ A full-stack Pokémon app demo built with React, Vite, Node, Express, and Postgr
 
 ## 🧱 Tech Stack
 
-| Frontend                          | Backend                          |
-|----------------------------------|----------------------------------|
-| React + Vite                     | Node.js + Express                |
-| React Router v6                  | Prisma ORM                       |
-| Material UI (MUI)                | PostgreSQL                       |
-| Context API for auth state       | JWT for authentication           |
-| Axios for HTTP requests          | bcrypt for password hashing      |
+| Frontend
+    React + Vite
+    React Router v6
+    Context API for auth state
+    Axios for HTTP requests
+    Material UI (MUI)
+
+
+| Backend
+    Node.js + Express
+    Prisma ORM
+    PostgreSQL
+    JWT for authentication
+    bcrypt for password hashing
 
 ---
 

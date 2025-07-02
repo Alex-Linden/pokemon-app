@@ -8,6 +8,7 @@ import {
     CardMedia,
     Button,
 } from "@mui/material";
+import PokemonCard from "../Components/PokemonCard/PokemonCard";
 
 // Dummy Pokémon data
 const dummyPokemon = [
@@ -61,31 +62,11 @@ export default function BrowsePage() {
             <Grid container spacing={4}>
                 {pokemonList.map((pokemon) => (
                     <Grid item xs={12} sm={6} md={3} key={pokemon.id}>
-                        <Card>
-                            <CardMedia
-                                component="img"
-                                height="200"
-                                image={pokemon.imageUrl}
-                                alt={pokemon.name}
-                            />
-                            <CardContent>
-                                <Typography variant="h6">{pokemon.name}</Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                    Type: {pokemon.type}
-                                </Typography>
-                                {user && (
-                                    <Button
-                                        variant="contained"
-                                        color="primary"
-                                        size="small"
-                                        sx={{ mt: 2 }}
-                                        onClick={() => handleCatch(pokemon.id)}
-                                    >
-                                        Catch
-                                    </Button>
-                                )}
-                            </CardContent>
-                        </Card>
+                        <PokemonCard
+                            pokemon={pokemon}
+                            onCatch={handleCatch}
+                            showCatch={user.isLoggedIn}
+                        />
                     </Grid>
                 ))}
             </Grid>
