@@ -1,75 +1,69 @@
+import { useEffect, useState } from "react";
+import { Typography, Grid, CircularProgress, Box } from "@mui/material";
 import { useAuth } from "../context/AuthContext";
-import { useState, useEffect } from "react";
-import {
-    Grid,
-    Card,
-    CardContent,
-    Typography,
-    CardMedia,
-    Button,
-} from "@mui/material";
-import PokemonCard from "../Components/PokemonCard/PokemonCard";
-
-// Dummy Pokémon data
-const dummyPokemon = [
-    {
-        id: "001",
-        name: "Bulbasaur",
-        imageUrl: "https://img.pokemondb.net/artwork/large/bulbasaur.jpg",
-        type: "Grass/Poison",
-    },
-    {
-        id: "004",
-        name: "Charmander",
-        imageUrl: "https://img.pokemondb.net/artwork/large/charmander.jpg",
-        type: "Fire",
-    },
-    {
-        id: "007",
-        name: "Squirtle",
-        imageUrl: "https://img.pokemondb.net/artwork/large/squirtle.jpg",
-        type: "Water",
-    },
-    {
-        id: "025",
-        name: "Pikachu",
-        imageUrl: "https://img.pokemondb.net/artwork/large/pikachu.jpg",
-        type: "Electric",
-    },
-];
+import PokemonCard from "../components/PokemonCard/PokemonCard";
+import api from "../services/api";
 
 export default function BrowsePage() {
-    const { user } = useAuth();
-    const [pokemonList, setPokemonList] = useState([]);
+  const { user } = useAuth();
+  const [pokemonList, setPokemonList] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-    useEffect(() => {
-        // In production: fetch from API instead of using dummy data
-        setPokemonList(dummyPokemon);
-    }, []);
-
-    const handleCatch = (pokemonId) => {
-        // In production: POST to backend API
-        console.log(`Caught Pokémon with ID: ${pokemonId}`);
-        alert(`You caught ${pokemonList.find(p => p.id === pokemonId).name}!`);
+  useEffect(() => {
+    const fetchPokemon = async () => {
+      try {
+        const res = await api.get("/pokemon");
+        setPokemonList(res.data);
+      } catch (err) {
+        setError("Failed to fetch Pokémon. Please try again.");
+        console.error("❌ Fetch error:", err.message);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    return (
-        <>
-            <Typography variant="h4" gutterBottom>
-                Pokémon Library
-            </Typography>
+    fetchPokemon();
+  }, []);
 
-            <Grid container spacing={4}>
-                {pokemonList.map((pokemon) => (
-                    <Grid item xs={12} sm={6} md={3} key={pokemon.id}>
-                        <PokemonCard
-                            pokemon={pokemon}
-                            showCatch={!!user}
-                            onCatch={handleCatch}
-                        />
-                    </Grid>
-                ))}
-            </Grid>
-        </>
+  const handleCatch = (pokemonId) => {
+    alert(`Caught Pokémon with ID: ${pokemonId}`);
+  };
+
+  if (loading) {
+    return (
+      <Box textAlign="center" mt={8}>
+        <CircularProgress />
+        <Typography variant="h6" mt={2}>Loading Pokémon...</Typography>
+      </Box>
     );
+  }
+
+  if (error) {
+    return (
+      <Box textAlign="center" mt={8}>
+        <Typography color="error" variant="h6">{error}</Typography>
+      </Box>
+    );
+  }
+
+  return (
+    <>
+      <Typography variant="h4" gutterBottom>
+        Pokémon Library
+      </Typography>
+
+      <Grid container spacing={4}>
+        {pokemonList.map((pokemon) => (
+          <Grid item xs={12} sm={6} md={3} key={pokemon.id}>
+            <PokemonCard
+              pokemon={pokemon}
+              showCatch={!!user}
+              onCatch={handleCatch}
+            />
+          </Grid>
+        ))}
+      </Grid>
+    </>
+  );
 }
