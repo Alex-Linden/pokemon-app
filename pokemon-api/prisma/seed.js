@@ -1,5 +1,5 @@
-import { PrismaClient } from "@prisma/client";
-import axios from "axios";
+const { PrismaClient } = require("@prisma/client");
+const axios = require("axios");
 
 const prisma = new PrismaClient();
 

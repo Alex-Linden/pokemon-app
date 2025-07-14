@@ -1,29 +1,30 @@
-import express from "express";
-import cors from "cors";
-import morgan from "morgan";
-import dotenv from "dotenv";
-
-import authRoutes from "./routes/auth.routes.js";
-import userRoutes from "./routes/user.routes.js";
-import pokemonRoutes from "./routes/pokemon.routes.js";
-
-dotenv.config();
-
+require("dotenv").config();
+const express = require('express');
+const morgan = require('morgan');
+const cors = require('cors');
+const pokemonRoutes = require("./routes/pokemon.routes");
 const app = express();
 
 // Middleware
-app.use(cors());
 app.use(express.json());
-app.use(morgan("dev"));
+app.use(cors());
+app.use(morgan('dev'));
 
 // Routes
-app.use("/api/auth", authRoutes);
-app.use("/api", userRoutes);         // e.g., /api/me
-app.use("/api/pokemon", pokemonRoutes); // e.g., /api/pokemon
+app.use("/api/pokemon", pokemonRoutes);
 
 // 404 fallback
 app.use("*", (req, res) => {
   res.status(404).json({ error: "Route not found" });
 });
 
-export default app;
+module.exports = app;
+
+// const express = require("express");
+// const app = express();
+
+// app.get("/", (req, res) => {
+//   res.send("Hello World!");
+// });
+
+// module.exports = app;
