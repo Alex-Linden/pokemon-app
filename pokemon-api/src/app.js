@@ -5,9 +5,15 @@ const cors = require('cors');
 const pokemonRoutes = require("./routes/pokemon.routes");
 const app = express();
 
+const allowedOrigin = process.env.FRONTEND_URL || "http://localhost:5173";
+
 // Middleware
+app.use(cors({
+  origin: allowedOrigin,
+  credentials: true, // allow cookies or auth headers
+}));
+
 app.use(express.json());
-app.use(cors());
 app.use(morgan('dev'));
 
 // Routes
