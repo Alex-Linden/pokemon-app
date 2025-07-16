@@ -50,6 +50,7 @@ async function fetchPokemonDetails(url) {
   const description = await fetchPokemonDescription(data.name);
 
   return {
+    id: parseInt(data.id),
     name: data.name,
     imageUrl,
     type: types,

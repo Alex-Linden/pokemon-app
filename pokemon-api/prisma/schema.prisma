@@ -24,7 +24,7 @@ model User {
 }
 
 model Pokemon {
-  id       String @id @default(cuid())
+  id       Int @id @unique
   name     String @unique
   imageUrl String
   type     String
@@ -45,7 +45,7 @@ model Caught {
   user      User     @relation(fields: [userId], references: [id])
   userId    String
   pokemon   Pokemon  @relation(fields: [pokemonId], references: [id])
-  pokemonId String
+  pokemonId Int
   createdAt DateTime @default(now())
 
   @@unique([userId, pokemonId]) // Prevent duplicate catches

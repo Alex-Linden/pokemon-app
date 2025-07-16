@@ -5,7 +5,7 @@ async function getAllPokemon(req, res) {
     const pokemonList = await getAllPokemonFromDB();
     res.json(pokemonList);
   } catch (error) {
-    console.error("❌ Error fetching Pokémon:", error);
+    console.error("Error fetching Pokémon:", error);
     res.status(500).json({ error: "Failed to fetch Pokémon" });
   }
 }
