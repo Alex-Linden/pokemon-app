@@ -1,92 +1,34 @@
 const { PrismaClient } = require("@prisma/client");
-const axios = require("axios");
+const { fetchPokemonFromPokeAPI } = require("../src/utils/pokeapi");
 
 const prisma = new PrismaClient();
-
-const POKEAPI_BASE = "https://pokeapi.co/api/v2/pokemon";
 const NUM_POKEMON = 151;
 
-async function fetchPokemonList(limit) {
-  const res = await axios.get(`${POKEAPI_BASE}?limit=${limit}`);
-  return res.data.results;
-}
-
-function extractStat(data, statName) {
-  const stat = data.stats.find((s) => s.stat.name === statName);
-  return stat ? stat.base_stat : 0;
-}
-
-async function fetchPokemonDescription(name) {
-  try {
-    const res = await axios.get(`https://pokeapi.co/api/v2/pokemon-species/${name}`);
-    const entries = res.data.flavor_text_entries;
-
-    const englishEntry = entries.find((entry) => entry.language.name === "en");
-    return englishEntry?.flavor_text.replace(/\f|\n/g, " ") || "No description available.";
-  } catch (err) {
-    console.error(`⚠️ Description not found for ${name}`);
-    return "No description available.";
-  }
-}
-
-async function fetchPokemonDetails(url) {
-  const res = await axios.get(url);
-  const data = res.data;
-
-  const imageUrl =
-    data.sprites.other["official-artwork"].front_default ||
-    data.sprites.front_default;
-
-  const types = data.types.map((t) => t.type.name).join("/");
-
-  const hp = extractStat(data, "hp");
-  const attack = extractStat(data, "attack");
-  const defense = extractStat(data, "defense");
-  const speed = extractStat(data, "speed");
-
-  const ability =
-    data.abilities.find((a) => !a.is_hidden)?.ability.name || "unknown";
-
-  const description = await fetchPokemonDescription(data.name);
-
-  return {
-    id: parseInt(data.id),
-    name: data.name,
-    imageUrl,
-    type: types,
-    hp,
-    attack,
-    defense,
-    speed,
-    height: data.height,
-    weight: data.weight,
-    ability,
-    description,
-  };
-}
-
 async function main() {
-  console.log(`🌱 Seeding ${NUM_POKEMON} Pokémon with descriptions...`);
+  console.log(`🌱 Seeding ${NUM_POKEMON} Pokémon from PokéAPI...`);
 
-  const list = await fetchPokemonList(NUM_POKEMON);
-
-  for (const entry of list) {
+  for (let id = 1; id <= NUM_POKEMON; id++) {
     try {
-      const pokemon = await fetchPokemonDetails(entry.url);
+      const pokemon = await fetchPokemonFromPokeAPI(id);
+
+      if (!pokemon) {
+        console.warn(`⚠️ Skipping Pokémon #${id} — not found or invalid`);
+        continue;
+      }
 
       await prisma.pokemon.upsert({
-        where: { name: pokemon.name },
-        update: {},
+        where: { id: pokemon.id },
+        update: {}, // you can add update logic here if desired
         create: pokemon,
       });
 
       console.log(`✅ Inserted: ${pokemon.name}`);
     } catch (error) {
-      console.error(`❌ Failed to insert ${entry.name}: ${error.message}`);
+      console.error(`❌ Failed to insert Pokémon #${id}: ${error.message}`);
     }
   }
 
-  console.log("🌟 Done seeding.");
+  console.log("🌟 Done seeding all Pokémon.");
 }
 
 main()
