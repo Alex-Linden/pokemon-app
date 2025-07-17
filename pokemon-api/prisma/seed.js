@@ -4,7 +4,7 @@ const axios = require("axios");
 const prisma = new PrismaClient();
 
 const POKEAPI_BASE = "https://pokeapi.co/api/v2/pokemon";
-const NUM_POKEMON = 20;
+const NUM_POKEMON = 151;
 
 async function fetchPokemonList(limit) {
   const res = await axios.get(`${POKEAPI_BASE}?limit=${limit}`);
