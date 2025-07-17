@@ -31,24 +31,21 @@ async function getOrCreatePokemonById(id) {
 }
 
 
-async function getPokemonByName(name) {
-  return await prisma.pokemon.findUnique({
+async function getOrCreatePokemonByName(name) {
+  let pokemon = await prisma.pokemon.findUnique({
     where: { name },
-    select: {
-      id: true,
-      name: true,
-      imageUrl: true,
-      type: true,
-      hp: true,
-      attack: true,
-      defense: true,
-      speed: true,
-      height: true,
-      weight: true,
-      ability: true,
-      description: true,
-    },
   });
+
+  if (pokemon) return pokemon;
+
+  // 2. Fetch from external API if missing
+  const fetched = await fetchPokemonFromPokeAPI(name);
+  if (!fetched) return null;
+
+  // 3. Insert into DB
+  pokemon = await prisma.pokemon.create({ data: fetched });
+
+  return pokemon;
 }
 
 async function searchPokemonByName(nameFragment) {
@@ -66,6 +63,6 @@ async function searchPokemonByName(nameFragment) {
 module.exports = {
   getAllPokemonFromDB,
   getOrCreatePokemonById,
-  getPokemonByName,
+  getOrCreatePokemonByName,
   searchPokemonByName,
 };

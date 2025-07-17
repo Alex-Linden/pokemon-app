@@ -1,9 +1,18 @@
 const express = require("express");
-const { getAllPokemon, getPokemonById } = require("../controllers/pokemon.controller");
+const { getAllPokemon, getPokemonById, getPokemonByName, handleSearchPokemonByName } = require("../controllers/pokemon.controller");
 
 const router = express.Router();
 
-router.get("/", getAllPokemon); // GET /api/pokemon
-router.get("/:id", getPokemonById); // GET /api/pokemon/:id
+// GET /api/pokemon
+router.get("/", getAllPokemon);
+
+// GET /api/pokemon/:id
+router.get("/:id(\\d+)", getPokemonById);
+
+// GET /api/pokemon/exact?q=pikachu
+router.get("/exact", getPokemonByName);
+
+// GET /api/pokemon/search?q=saur
+router.get("/search", handleSearchPokemonByName);
 
 module.exports = router;
