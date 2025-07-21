@@ -5,6 +5,7 @@ const {
   searchPokemonByName,
   catchPokemon,
   getCaughtPokemonFromDB,
+  releasePokemon,
 } = require("../services/pokemon.services");
 
 async function getAllPokemon(req, res) {
@@ -129,6 +130,40 @@ async function getCaughtPokemonForUser(req, res) {
   }
 }
 
+async function releasePokemonForUser(req, res) {
+  const { id } = req.params;
+  const userId = req.user.id;
+
+  const parsedId = parseInt(id);
+  if (isNaN(parsedId)) {
+    return res.status(400).json({ error: "Invalid Pokémon ID" });
+  }
+
+  try {
+    const pokemon = await getOrCreatePokemonById(parsedId);
+
+    if (!pokemon) {
+      return res.status(404).json({ error: "Pokémon not found" });
+    }
+
+    await releasePokemon(userId, pokemon.id);
+
+    res.status(200).json({
+      message: "Pokémon released!",
+      pokemon,
+    });
+  } catch (error) {
+    console.error("❌ Error releasing Pokémon:", error);
+
+    if (error.message.includes("haven't caught")) {
+      return res.status(409).json({ error: error.message });
+    }
+
+    res.status(500).json({ error: "Failed to release Pokémon" });
+  }
+}
+
+
 
 
 module.exports = {
@@ -138,4 +173,5 @@ module.exports = {
   handleSearchPokemonByName,
   catchPokemonForUser,
   getCaughtPokemonForUser,
+  releasePokemonForUser,
 };

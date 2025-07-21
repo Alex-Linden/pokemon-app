@@ -6,6 +6,7 @@ const {
   handleSearchPokemonByName,
   catchPokemonForUser,
   getCaughtPokemonForUser,
+  releasePokemonForUser,
 } = require("../controllers/pokemon.controller");
 const requireAuth = require("../middleware/requireAuth");
 
@@ -28,5 +29,8 @@ router.post("/:id/catch", requireAuth, catchPokemonForUser);
 
 // GET /api/pokemon/caught (requires auth)
 router.get("/caught", requireAuth, getCaughtPokemonForUser);
+
+//DELETE /api/pokemon/:id/release (requires auth)
+router.delete("/:id/release", requireAuth, releasePokemonForUser);
 
 module.exports = router;

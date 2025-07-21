@@ -123,6 +123,32 @@ async function getCaughtPokemonFromDB(userId) {
   });
 }
 
+async function releasePokemon(userId, pokemonId) {
+  const caught = await prisma.caught.findUnique({
+    where: {
+      userId_pokemonId: {
+        userId,
+        pokemonId,
+      },
+    },
+  });
+
+  if (!caught) {
+    throw new Error("You haven't caught this Pokémon!");
+  }
+
+  return await prisma.caught.delete({
+    where: {
+      userId_pokemonId: {
+        userId,
+        pokemonId,
+      },
+    },
+  });
+}
+
+
+
 
 module.exports = {
   getAllPokemonFromDB,
@@ -131,4 +157,5 @@ module.exports = {
   searchPokemonByName,
   catchPokemon,
   getCaughtPokemonFromDB,
+  releasePokemon,
 };
