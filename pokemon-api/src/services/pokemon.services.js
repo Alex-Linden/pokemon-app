@@ -60,9 +60,33 @@ async function searchPokemonByName(nameFragment) {
   });
 }
 
+async function catchPokemon(userId, pokemonId) {
+  const existingCaught = await prisma.caught.findUnique({
+    where: {
+      userId_pokemonId: {
+        userId,
+        pokemonId,
+      },
+    },
+  });
+
+  if (existingCaught) {
+    throw new Error("You've already caught this Pokémon!");
+  }
+
+  return await prisma.caught.create({
+    data: {
+      userId,
+      pokemonId,
+    },
+  });
+}
+
+
 module.exports = {
   getAllPokemonFromDB,
   getOrCreatePokemonById,
   getOrCreatePokemonByName,
   searchPokemonByName,
+  catchPokemon,
 };

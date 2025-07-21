@@ -17,7 +17,7 @@ async function requireAuth(req, res, next) {
     const decoded = jwt.verify(token, JWT_SECRET);
     const user = await prisma.user.findUnique({
       where: { id: decoded.id },
-      select: { id: true, username: true },
+      select: { id: true, name: true },
     });
 
     if (!user) {
