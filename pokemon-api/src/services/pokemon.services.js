@@ -1,9 +1,21 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
-async function getAllPokemonFromDB() {
+async function getAllPokemonFromDB(filters = {}) {
+  const {
+    type,
+    ability,
+    sortBy = "id",
+    order = "asc",
+  } = filters;
   return await prisma.pokemon.findMany({
-    orderBy: { name: "asc" },
+    where: {
+      ...(type && { type: { contains: type, mode: "insensitive" } }),
+      ...(ability && { ability: { contains: ability, mode: "insensitive" } }),
+    },
+    orderBy: {
+      [sortBy]: order,
+    },
     select: {
       id: true,
       name: true,
@@ -82,6 +94,35 @@ async function catchPokemon(userId, pokemonId) {
   });
 }
 
+async function getCaughtPokemonFromDB(userId) {
+  return await prisma.caught.findMany({
+    where: { userId },
+    include: {
+      pokemon: {
+        select: {
+          id: true,
+          name: true,
+          imageUrl: true,
+          type: true,
+          hp: true,
+          attack: true,
+          defense: true,
+          speed: true,
+          height: true,
+          weight: true,
+          ability: true,
+          description: true,
+        },
+      },
+    },
+    orderBy: {
+      pokemon: {
+        name: "asc",
+      },
+    },
+  });
+}
+
 
 module.exports = {
   getAllPokemonFromDB,
@@ -89,4 +130,5 @@ module.exports = {
   getOrCreatePokemonByName,
   searchPokemonByName,
   catchPokemon,
+  getCaughtPokemonFromDB,
 };

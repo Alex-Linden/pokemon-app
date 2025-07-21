@@ -4,14 +4,17 @@ const {
   getOrCreatePokemonByName,
   searchPokemonByName,
   catchPokemon,
+  getCaughtPokemonFromDB,
 } = require("../services/pokemon.services");
 
 async function getAllPokemon(req, res) {
+  const { type, ability, sortBy, order } = req.query;
+
   try {
-    const pokemonList = await getAllPokemonFromDB();
+    const pokemonList = await getAllPokemonFromDB({ type, ability, sortBy, order });
     res.json(pokemonList);
   } catch (error) {
-    console.error("Error fetching Pokémon:", error);
+    console.error("❌ Error fetching Pokémon:", error);
     res.status(500).json({ error: "Failed to fetch Pokémon" });
   }
 }
@@ -112,6 +115,21 @@ async function catchPokemonForUser(req, res) {
   }
 }
 
+async function getCaughtPokemonForUser(req, res) {
+  const userId = req.user.id;
+
+  try {
+    const caught = await getCaughtPokemonFromDB(userId);
+    const pokemonList = caught.map((entry) => entry.pokemon); // flatten
+
+    res.json(pokemonList);
+  } catch (error) {
+    console.error("❌ Error fetching caught Pokémon:", error);
+    res.status(500).json({ error: "Failed to fetch caught Pokémon" });
+  }
+}
+
+
 
 module.exports = {
   getAllPokemon,
@@ -119,4 +137,5 @@ module.exports = {
   getPokemonByName,
   handleSearchPokemonByName,
   catchPokemonForUser,
+  getCaughtPokemonForUser,
 };
