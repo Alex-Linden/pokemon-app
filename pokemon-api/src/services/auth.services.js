@@ -21,7 +21,7 @@ async function register(name, email, password) {
     data: { name, email, hashedPassword },
   });
 
-  return generateToken(user);
+  return [generateToken(user), user];
 }
 
 async function login(email, password) {
@@ -31,7 +31,7 @@ async function login(email, password) {
   const isValid = await bcrypt.compare(password, user.hashedPassword);
   if (!isValid) throw new Error("Invalid username or password");
 
-  return generateToken(user);
+  return [generateToken(user), user];
 }
 
 module.exports = { register, login };

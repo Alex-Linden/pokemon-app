@@ -4,6 +4,7 @@ const morgan = require('morgan');
 const cors = require('cors');
 const pokemonRoutes = require("./routes/pokemon.routes");
 const authRoutes = require("./routes/auth.routes");
+const userRoutes = require("./routes/user.routes");
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use(morgan('dev'));
 // Routes
 app.use("/api/pokemon", pokemonRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api", userRoutes);
 
 // 404 fallback
 app.use("*", (req, res) => {
