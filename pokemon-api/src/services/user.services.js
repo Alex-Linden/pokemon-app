@@ -26,4 +26,5 @@ async function getUserFromDb(userId) {
 
 module.exports = {
   updateUserProfile,
+  getUserFromDb,
 };
