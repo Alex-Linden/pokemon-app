@@ -1,4 +1,4 @@
-const { updateUserProfile, getUserFromDb } = require("../services/user.services");
+const { updateUserProfile, getUserFromDb, deleteUserFromDb } = require("../services/user.services");
 const { serializeUser } = require("../utils/serializeUser");
 
 async function updateMe(req, res) {
@@ -35,7 +35,20 @@ async function getMe(req, res) {
   }
 }
 
+async function deleteMe(req, res) {
+  const userId = req.user.id;
+
+  try {
+    const deletedUser = await deleteUserFromDb(userId);
+    res.json({ message: "Profile deleted" });
+  } catch (err) {
+    console.error("❌ Error deleting profile:", err);
+    res.status(500).json({ error: "Failed to delete profile" });
+  }
+}
+
 module.exports = {
   updateMe,
   getMe,
+  deleteMe,
 };

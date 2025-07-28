@@ -24,7 +24,14 @@ async function getUserFromDb(userId) {
   });
 }
 
+async function deleteUserFromDb(userId) {
+  return await prisma.user.delete({
+    where: { id: userId },
+  });
+}
+
 module.exports = {
   updateUserProfile,
   getUserFromDb,
+  deleteUserFromDb,
 };
