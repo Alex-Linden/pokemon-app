@@ -1,6 +1,6 @@
 import { Typography, Button, Box, Stack } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/useAuth";
 
 export default function LandingPage() {
     const navigate = useNavigate();

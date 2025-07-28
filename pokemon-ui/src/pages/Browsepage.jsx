@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Typography, Grid, CircularProgress, Box } from "@mui/material";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/useAuth";
 import PokemonCard from "../components/PokemonCard/PokemonCard";
 import api from "../services/api";
 
