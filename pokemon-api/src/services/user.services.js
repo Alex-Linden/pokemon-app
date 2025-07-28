@@ -18,6 +18,12 @@ async function updateUserProfile(userId, updates) {
   });
 }
 
+async function getUserFromDb(userId) {
+  return await prisma.user.findUnique({
+    where: { id: userId }
+  });
+}
+
 module.exports = {
   updateUserProfile,
 };

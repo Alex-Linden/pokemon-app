@@ -1,4 +1,4 @@
-const { updateUserProfile } = require("../services/user.services");
+const { updateUserProfile, getUserFromDb } = require("../services/user.services");
 const { serializeUser } = require("../utils/serializeUser");
 
 async function updateMe(req, res) {
@@ -23,6 +23,19 @@ async function updateMe(req, res) {
   }
 }
 
+async function getMe(req, res) {
+  const userId = req.user.id;
+
+  try {
+    const user = await getUserFromDb(userId);
+    res.json({ user: serializeUser(user) });
+  } catch (err) {
+    console.error("❌ Error getting profile:", err);
+    res.status(500).json({ error: "Failed to get profile" });
+  }
+}
+
 module.exports = {
   updateMe,
+  getMe,
 };
