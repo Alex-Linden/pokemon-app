@@ -3,6 +3,7 @@ import { Typography, Grid, CircularProgress, Box } from "@mui/material";
 import { useAuth } from "../context/useAuth";
 import PokemonCard from "../components/PokemonCard/PokemonCard";
 import api from "../services/api";
+import { catchPokemon } from "../services/pokemon";
 
 export default function BrowsePage() {
   const { user } = useAuth();
@@ -28,6 +29,7 @@ export default function BrowsePage() {
 
   const handleCatch = (pokemonId) => {
     alert(`Caught Pokémon with ID: ${pokemonId}`);
+    catchPokemon(pokemonId);
   };
 
   if (loading) {
