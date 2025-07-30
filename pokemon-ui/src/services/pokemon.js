@@ -8,6 +8,6 @@ export async function getCaughtPokemon() {
 
 export async function catchPokemon(pokemonID) {
   const res = await api.post(`/pokemon/${pokemonID}/catch`);
-  // console.log("services/pokemon.js", res.data);
+  console.log("catchPokemon", res.data);
   return res.data;
 }

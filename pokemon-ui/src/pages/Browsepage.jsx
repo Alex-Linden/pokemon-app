@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Typography, Grid, CircularProgress, Box } from "@mui/material";
+import { Typography, Grid, CircularProgress, Box, Snackbar } from "@mui/material";
 import { useAuth } from "../context/useAuth";
 import PokemonCard from "../components/PokemonCard/PokemonCard";
 import api from "../services/api";
@@ -10,6 +10,9 @@ export default function BrowsePage() {
   const [pokemonList, setPokemonList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [snackOpen, setSnackOpen] = useState(false);
+  const [snackMessage, setSnackMessage] = useState("");
+
 
   useEffect(() => {
     const fetchPokemon = async () => {
@@ -27,9 +30,17 @@ export default function BrowsePage() {
     fetchPokemon();
   }, []);
 
-  const handleCatch = (pokemonId) => {
-    alert(`Caught Pokémon with ID: ${pokemonId}`);
-    catchPokemon(pokemonId);
+  const handleCatch = async (pokemon) => {
+    try {
+      const res = await catchPokemon(pokemon.id);
+      setSnackMessage(`✅ ${res.pokemon.name} caught!`);
+      setSnackOpen(true);
+    } catch (err) {
+      const message =
+        err.response?.data?.error || `❌ Could not catch ${pokemon.name}`;
+      setSnackMessage(message);
+      setSnackOpen(true);
+    }
   };
 
   if (loading) {
@@ -54,6 +65,12 @@ export default function BrowsePage() {
       <Typography variant="h4" gutterBottom>
         Pokémon Library
       </Typography>
+      <Snackbar
+        open={snackOpen}
+        autoHideDuration={3000}
+        onClose={() => setSnackOpen(false)}
+        message={snackMessage}
+      />
 
       <Grid container spacing={4}>
         {pokemonList.map((pokemon) => (

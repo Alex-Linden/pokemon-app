@@ -26,7 +26,7 @@ export default function PokemonCard({ pokemon, onCatch, showCatch = false }) {
                         color="primary"
                         size="small"
                         sx={{ mt: 2 }}
-                        onClick={() => onCatch(pokemon.id)}
+                        onClick={() => onCatch(pokemon)}
                     >
                         Catch
                     </Button>
