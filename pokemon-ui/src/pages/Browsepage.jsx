@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Typography, Grid, CircularProgress, Box, Snackbar } from "@mui/material";
 import { useAuth } from "../context/useAuth";
 import PokemonCard from "../components/PokemonCard/PokemonCard";
@@ -6,7 +6,7 @@ import api from "../services/api";
 import { catchPokemon } from "../services/pokemon";
 
 export default function BrowsePage() {
-  const { refreshCaught, user } = useAuth();
+  const { caught, refreshCaught, user } = useAuth();
   const [pokemonList, setPokemonList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -29,6 +29,11 @@ export default function BrowsePage() {
 
     fetchPokemon();
   }, []);
+
+  const caughtIds = useMemo(() => {
+    return new Set(caught.map((entry) => entry.pokemon?.id || entry.id));
+  }, [caught]);
+
 
   const handleCatch = async (pokemon) => {
     try {
@@ -78,8 +83,9 @@ export default function BrowsePage() {
           <Grid item xs={12} sm={6} md={3} key={pokemon.id}>
             <PokemonCard
               pokemon={pokemon}
-              showCatch={!!user}
+              showCatch={!!user && !caughtIds.has(pokemon.id)}
               onCatch={handleCatch}
+              isCaught={caughtIds.has(pokemon.id)}
             />
           </Grid>
         ))}
