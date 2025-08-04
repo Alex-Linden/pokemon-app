@@ -7,6 +7,7 @@ const {
   getCaughtPokemonFromDB,
   releasePokemon,
 } = require("../services/pokemon.services");
+const { calculateCatchSuccess } = require("../utils/captureLogic");
 
 async function getAllPokemon(req, res) {
   const { type, ability, sortBy, order } = req.query;
@@ -97,6 +98,13 @@ async function catchPokemonForUser(req, res) {
 
     if (!pokemon) {
       return res.status(404).json({ error: "Pokémon not found" });
+    }
+
+    const trainerSkill = 1.0; // TODO: Implement skill calculation
+    const success = calculateCatchSuccess(pokemon, trainerSkill);
+
+    if (!success) {
+      return res.status(403).json({ error: `${pokemon.name} escaped!` });
     }
 
     await catchPokemon(userId, pokemon.id);
