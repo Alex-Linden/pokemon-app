@@ -6,7 +6,7 @@ import api from "../services/api";
 import { catchPokemon } from "../services/pokemon";
 
 export default function BrowsePage() {
-  const { user } = useAuth();
+  const { refreshCaught, user } = useAuth();
   const [pokemonList, setPokemonList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -33,6 +33,7 @@ export default function BrowsePage() {
   const handleCatch = async (pokemon) => {
     try {
       const res = await catchPokemon(pokemon.id);
+      await refreshCaught();
       setSnackMessage(`✅ ${res.pokemon.name} caught!`);
       setSnackOpen(true);
     } catch (err) {
