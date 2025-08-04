@@ -37,7 +37,7 @@ model Pokemon {
   weight      Int
   ability     String
   description String
-  captureRate Int @default(127)
+  captureRate Int
   caught      Caught[]
 }
 
