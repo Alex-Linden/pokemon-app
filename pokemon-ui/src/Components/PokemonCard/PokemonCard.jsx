@@ -36,7 +36,7 @@ export default function PokemonCard({ pokemon, onCatch, isCaught, showCatch = fa
                     ) : (
                         <Button
                             variant="contained"
-                            color="secondary"
+                            color="success"
                             size="small"
                             sx={{ mt: 2 }}
                         >
