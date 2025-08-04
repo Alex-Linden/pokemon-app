@@ -1,4 +1,4 @@
-import Navbar from "../components/Navbar/Navbar";
+import Navbar from "../Components/Navbar/Navbar";
 import { Container } from "@mui/material";
 
 export default function MainLayout({ children }) {

@@ -12,8 +12,8 @@ import {
   Button,
 } from "@mui/material";
 import { useAuth } from "../context/useAuth";
-import PokemonCard from "../components/PokemonCard/PokemonCard";
-import PokemonModal from "../components/PokemonModal";
+import PokemonCard from "../Components/PokemonCard/PokemonCard";
+import PokemonModal from "../Components/PokemonModal";
 import { releasePokemon } from "../services/pokemon";
 
 export default function ProfilePage() {
