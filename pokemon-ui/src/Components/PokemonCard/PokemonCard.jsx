@@ -8,10 +8,10 @@ import {
     Button,
 } from "@mui/material";
 
-export default function PokemonCard({ pokemon, onCatch, isCaught, showCatch = false }) {
+export default function PokemonCard({ pokemon, onCatch, isCaught, onClick, showCatch = false }) {
     return (
         <Box sx={{ position: "relative" }}>
-            <Card>
+            <Card onClick={() => onClick(pokemon)} sx={{ cursor: "pointer", position: "relative" }}>
                 <CardMedia
                     component="img"
                     height="200"
