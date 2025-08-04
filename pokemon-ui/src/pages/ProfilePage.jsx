@@ -39,6 +39,7 @@ export default function ProfilePage() {
     };
 
     loadCaught();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleCardClick = (pokemon) => {
