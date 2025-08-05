@@ -63,14 +63,17 @@ export default function BrowsePage() {
       const res = await catchPokemon(pokemon.id);
       await refreshCaught();
       setSnackMessage(`✅ ${res.pokemon.name} caught!`);
+      setSnackOpen(true);
+      return true; // ✅ success
     } catch (err) {
       const message =
         err.response?.data?.error || `❌ Could not catch ${pokemon.name}`;
       setSnackMessage(message);
-    } finally {
       setSnackOpen(true);
+      return false; // ❌ failure
     }
   };
+
 
   // Modal logic
   const handleCardClick = (pokemon) => {
@@ -171,9 +174,8 @@ export default function BrowsePage() {
             open={isModalOpen}
             pokemon={selectedPokemon}
             onClose={handleModalClose}
-            isCaught={caughtIds.has(selectedPokemon.id)}
             onCatch={handleCatch}
-            onRelease={handleRequestRelease}
+            isCaught={caughtIds.has(selectedPokemon?.id)}
           />
 
           <Dialog open={confirmDialogOpen} onClose={handleCancelRelease}>
