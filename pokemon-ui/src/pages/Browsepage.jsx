@@ -18,19 +18,19 @@ import api from "../services/api";
 import { catchPokemon, releasePokemon } from "../services/pokemon";
 
 export default function BrowsePage() {
-  const { caught, refreshCaught, user } = useAuth();
+  const { caught, refreshCaught } = useAuth();
 
   // Data state
   const [pokemonList, setPokemonList] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  // const [error, setError] = useState("");
 
   // Modal state
   const [selectedPokemon, setSelectedPokemon] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
 
-  // Snackbar state
+  // Snackbar state (for fetch/release errors)
   const [snackOpen, setSnackOpen] = useState(false);
   const [snackMessage, setSnackMessage] = useState("");
 
@@ -42,7 +42,8 @@ export default function BrowsePage() {
         setPokemonList(res.data);
       } catch (err) {
         console.error("❌ Fetch error:", err.message);
-        setError("Failed to fetch Pokémon. Please try again.");
+        setSnackMessage("Failed to fetch Pokémon. Please try again.");
+        setSnackOpen(true);
       } finally {
         setLoading(false);
       }
@@ -51,29 +52,46 @@ export default function BrowsePage() {
     fetchPokemon();
   }, []);
 
-  // Get caught Pokémon IDs for quick lookup
+  // Compute caught Pokémon IDs
   const caughtIds = useMemo(
     () => new Set(caught.map((entry) => entry.pokemon?.id || entry.id)),
     [caught]
   );
 
-  // Catch logic
+  // Catch logic (returns success boolean)
   const handleCatch = async (pokemon) => {
     try {
       const res = await catchPokemon(pokemon.id);
       await refreshCaught();
-      setSnackMessage(`✅ ${res.pokemon.name} caught!`);
-      setSnackOpen(true);
-      return true; // ✅ success
+      return { success: true, pokemon: res.pokemon };
     } catch (err) {
       const message =
         err.response?.data?.error || `❌ Could not catch ${pokemon.name}`;
-      setSnackMessage(message);
-      setSnackOpen(true);
-      return false; // ❌ failure
+      console.error(message);
+      return { success: false, error: message };
     }
   };
 
+  // Release logic
+  const handleRequestRelease = () => setConfirmDialogOpen(true);
+
+  const handleConfirmRelease = async () => {
+    if (!selectedPokemon) return;
+    try {
+      await releasePokemon(selectedPokemon.id);
+      await refreshCaught();
+      setSnackMessage(`🧹 Released ${selectedPokemon.name}`);
+    } catch (err) {
+      console.error("❌ Release error:", err);
+      setSnackMessage("❌ Failed to release Pokémon");
+    } finally {
+      setSnackOpen(true);
+      setConfirmDialogOpen(false);
+      setIsModalOpen(false);
+    }
+  };
+
+  const handleCancelRelease = () => setConfirmDialogOpen(false);
 
   // Modal logic
   const handleCardClick = (pokemon) => {
@@ -86,35 +104,8 @@ export default function BrowsePage() {
     setIsModalOpen(false);
   };
 
-  // Release logic
-  const handleRequestRelease = () => {
-    setConfirmDialogOpen(true);
-  };
-
-  const handleConfirmRelease = async () => {
-    if (!selectedPokemon) return;
-    try {
-      await releasePokemon(selectedPokemon.id);
-      await refreshCaught();
-      setSnackMessage(`🧹 Released ${selectedPokemon.name}`);
-      setSnackOpen(true);
-      setConfirmDialogOpen(false);
-      setIsModalOpen(false);
-    } catch (err) {
-      console.error("❌ Release error:", err);
-      setSnackMessage("❌ Failed to release Pokémon");
-      setSnackOpen(true);
-    }
-  };
-
-  const handleCancelRelease = () => {
-    setConfirmDialogOpen(false);
-  };
-
-  // Snackbar logic
   const handleSnackClose = (_, reason) => {
-    if (reason === "clickaway") return;
-    setSnackOpen(false);
+    if (reason !== "clickaway") setSnackOpen(false);
   };
 
   // Loading state
@@ -124,17 +115,6 @@ export default function BrowsePage() {
         <CircularProgress />
         <Typography variant="h6" mt={2}>
           Loading Pokémon...
-        </Typography>
-      </Box>
-    );
-  }
-
-  // Error state
-  if (error) {
-    return (
-      <Box textAlign="center" mt={8}>
-        <Typography color="error" variant="h6">
-          {error}
         </Typography>
       </Box>
     );
@@ -159,8 +139,7 @@ export default function BrowsePage() {
           <Grid item xs={12} sm={6} md={3} key={pokemon.id}>
             <PokemonCard
               pokemon={pokemon}
-              showCatch={!!user && !caughtIds.has(pokemon.id)}
-              onCatch={handleCatch}
+              showCatch={false} // ❌ No direct catch button
               isCaught={caughtIds.has(pokemon.id)}
               onClick={handleCardClick}
             />
@@ -176,6 +155,7 @@ export default function BrowsePage() {
             onClose={handleModalClose}
             onCatch={handleCatch}
             isCaught={caughtIds.has(selectedPokemon?.id)}
+            onRelease={handleRequestRelease}
           />
 
           <Dialog open={confirmDialogOpen} onClose={handleCancelRelease}>

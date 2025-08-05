@@ -5,10 +5,9 @@ import {
     CardContent,
     Chip,
     Typography,
-    Button,
 } from "@mui/material";
 
-export default function PokemonCard({ pokemon, onCatch, isCaught, onClick, showCatch = false }) {
+export default function PokemonCard({ pokemon, isCaught, onClick }) {
     return (
         <Box sx={{ position: "relative" }}>
             <Card onClick={() => onClick(pokemon)} sx={{ cursor: "pointer", position: "relative" }}>
@@ -23,31 +22,23 @@ export default function PokemonCard({ pokemon, onCatch, isCaught, onClick, showC
                     <Typography variant="body2" color="text.secondary">
                         Type: {pokemon.type}
                     </Typography>
-                    {showCatch && !isCaught ? (
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            size="small"
-                            sx={{ mt: 2 }}
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                onCatch(pokemon)
-                            }}
-                        >
-                            Catch
-                        </Button>
-                    ) : (
-                        <Button
-                            variant="contained"
-                            color="success"
-                            size="small"
-                            sx={{ mt: 2 }}
-                        >
-                            Caught
-                        </Button>
-                    )}
                 </CardContent>
+
+                {/* Caught Chip */}
+                {isCaught && (
+                    <Chip
+                        label="Caught"
+                        color="success"
+                        size="small"
+                        sx={{
+                            position: "absolute",
+                            top: 8,
+                            right: 8,
+                            zIndex: 1,
+                        }}
+                    />
+                )}
             </Card>
-        </Box >
+        </Box>
     );
 }

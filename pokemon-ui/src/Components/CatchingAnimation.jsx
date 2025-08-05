@@ -5,10 +5,13 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import CatchingPokemonIcon from "@mui/icons-material/CatchingPokemon";
 
 export default function CatchingAnimation({ isCatching, result, onClose }) {
+    const showOverlay = isCatching || result;
+
     return (
         <AnimatePresence>
-            {(isCatching || result) && (
+            {showOverlay && (
                 <motion.div
+                    key="animation"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
@@ -24,7 +27,7 @@ export default function CatchingAnimation({ isCatching, result, onClose }) {
                 >
                     <Box
                         textAlign="center"
-                        bgcolor="white"
+                        bgcolor="background.paper"
                         p={4}
                         borderRadius={2}
                         boxShadow={5}
@@ -35,7 +38,10 @@ export default function CatchingAnimation({ isCatching, result, onClose }) {
                                 <motion.div
                                     animate={{
                                         rotate: [0, -15, 15, -10, 10, 0],
-                                        transition: { repeat: Infinity, duration: 1 },
+                                    }}
+                                    transition={{
+                                        repeat: Infinity,
+                                        duration: 1.2,
                                     }}
                                 >
                                     <CatchingPokemonIcon sx={{ fontSize: 80, color: "red" }} />
@@ -51,15 +57,23 @@ export default function CatchingAnimation({ isCatching, result, onClose }) {
                                 {result.success ? (
                                     <>
                                         <CheckCircleIcon color="success" sx={{ fontSize: 64 }} />
-                                        <Typography variant="h6" mt={2} color="success.main">
-                                            {result.message}
+                                        <Typography
+                                            variant="h6"
+                                            mt={2}
+                                            color="success.main"
+                                        >
+                                            {result.message || "Pokémon caught!"}
                                         </Typography>
                                     </>
                                 ) : (
                                     <>
                                         <CancelIcon color="error" sx={{ fontSize: 64 }} />
-                                        <Typography variant="h6" mt={2} color="error.main">
-                                            {result.message}
+                                        <Typography
+                                            variant="h6"
+                                            mt={2}
+                                            color="error.main"
+                                        >
+                                            {result.message || "Oh no! It got away."}
                                         </Typography>
                                     </>
                                 )}
