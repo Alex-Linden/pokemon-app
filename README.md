@@ -7,7 +7,9 @@ Users can register/login, browse a Pokémon library, attempt to catch Pokémon w
 
 ## 📜 Overview
 
-This app combines backend authentication, database persistence, and an interactive frontend to create a fun and dynamic experience for Pokémon fans. The capture mechanic is chance-based, influenced by each Pokémon’s **capture rate** (and in the future, the trainer’s experience level).
+This project was **originally built as part of an in-class demo** to show students the implementation of authentication, database relationships, and API integration in a more fully operational app. After the class, it was **expanded into a fun personal project** with additional gameplay features, animations, and UI improvements.
+
+The app combines backend authentication, database persistence, and an interactive frontend to create a fun and dynamic experience for Pokémon fans. The capture mechanic is chance-based, influenced by each Pokémon’s **capture rate** (and in the future, the trainer’s experience level).
 
 **Key Features:**
 - **Authentication**: Secure JWT-based login & registration.
